@@ -1,0 +1,39 @@
+FROM debian:jessie
+
+VOLUME /var/lib/bitcoind
+
+ADD . /opt/bitcoind
+WORKDIR /opt/bitcoind
+RUN cp -r testnet /var/lib/bitcoind
+RUN cp -r livenet /var/lib/bitcoind
+
+#更改源
+RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak
+RUN cp sources.list /etc/apt/
+RUN apt-get update \
+    && apt-get install -y git \
+    && apt-get autoremove -y \
+    && apt-get clean -y \
+    && apt-get autoclean -y
+
+#安装bitcoind
+RUN rm -rf .git*
+RUN git clone https://github.com/bitcoin/bitcoin.git
+RUN cd bitcoin \
+    && ./configure --with-incompatible-bdb --without-gui \
+    && make \
+    && make install \
+    && cd ../ \
+    && rm -rf bitcoin
+
+#Livenet
+EXPOSE 8332
+EXPOSE 8333
+
+#Testnet
+EXPOSE 18332
+EXPOSE 18333
+
+CMD ["/bin/bash"]
+
+docker run -it -h bitcoind --rm btcc/bitcoind

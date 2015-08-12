@@ -1,0 +1,44 @@
+FROM debian:jessie
+
+VOLUME /var/lib/bitcoind
+
+ADD . /opt/bitcoind
+WORKDIR /opt/bitcoind
+RUN cp -r testnet /var/lib/bitcoind
+RUN cp -r livenet /var/lib/bitcoind
+
+ENV TESTNET 0
+ENV VERSION 0.11.0
+
+#更改源
+#RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak
+#RUN cp sources.list /etc/apt/
+RUN apt-get update \
+    && apt-get install -y wget unzip build-essential libtool autotools-dev autoconf pkg-config libssl-dev libdb-dev libdb++-dev libboost-all-dev bsdmainutils \
+    && apt-get autoremove -y \
+    && apt-get clean -y \
+    && apt-get autoclean -y \
+    && rm -rf /var/lib/apt/lists/*
+
+#安装bitcoind
+RUN wget https://github.com/bitcoin/bitcoin/archive/v$VERSION.tar.gz \
+    && tar zxvf v$VERSION.tar.gz \
+    && cd bitcoin-$VERSION \
+    && ./autogen.sh \
+    && ./configure --with-incompatible-bdb --without-gui \
+    && make \
+    && make install \
+    && cd ../ \
+    && rm -rf bitcoin-$VERSION/ v$VERSION.tar.gz
+
+RUN chmod 755 run.sh
+
+#Livenet
+EXPOSE 8332
+EXPOSE 8333
+
+#Testnet
+EXPOSE 18332
+EXPOSE 18333
+
+CMD ["./run.sh"]
