@@ -1,4 +1,4 @@
-FROM zouchao2010/python2.7
+FROM zouchao2010/python:2.7
 
 VOLUME /var/lib/bitcoind
 
