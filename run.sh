@@ -17,7 +17,7 @@ if [ ! -f /var/lib/bitcoind/block_notify.py ]; then
 fi
 
 #run bitcoind
-if [ TESTNET -eq 0 ];
+if [ $TESTNET -eq 0 ];
 then
     bitcoind -datadir=/var/lib/bitcoind/livenet
 else
