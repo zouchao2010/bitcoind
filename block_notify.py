@@ -7,6 +7,7 @@ import base64
 import json
 import argparse
 import time
+import os
 
 parser = argparse.ArgumentParser(description='Send notification to Stratum instance about new bitcoin block.')
 parser.add_argument('--blockhash', dest='blockhash', type=str)
@@ -22,8 +23,10 @@ parser.add_argument('--redis_port', dest='redis_port', type=int)
 
 args = parser.parse_args()
 
+logdir = '/var/lib/bitcoind/{}/logs'.format('testnet' if args.netcode.upper() == 'XTN' else 'livenet')
+logfile = logdir + "/block_notify.log"
 handler = logging.handlers.RotatingFileHandler(
-            filename="/var/lib/bitcoind/{}/logs/block_notify.log".format('testnet' if args.netcode.upper() == 'XTN' else 'livenet'),
+            filename=logfile,
             maxBytes=1024 * 1024,
             backupCount=5)
 fmt = '%(asctime)s - %(filename)s:%(lineno)s - %(name)s - %(message)s'
@@ -44,6 +47,8 @@ def get_block(host, port, user, password, blockhash):
     return json.loads(r.text)['result']
 
 try:
+    if not os.path.exists(logdir):
+        os.makedirs(logdir)
     start = time.time()
     r = redis.StrictRedis(args.redis_host, args.redis_port)
     rawblock = get_block(args.bitcoin_rpc_host, args.bitcoin_rpc_port, args.bitcoin_rpc_user, args.bitcoin_rpc_password, args.blockhash)
