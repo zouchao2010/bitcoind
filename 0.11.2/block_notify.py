@@ -24,6 +24,8 @@ parser.add_argument('--redis_port', dest='redis_port', type=int)
 args = parser.parse_args()
 
 logdir = '/var/lib/bitcoind/{}/logs'.format('testnet' if args.netcode.upper() == 'XTN' else 'livenet')
+if not os.path.exists(logdir):
+    os.makedirs(logdir)
 logfile = logdir + "/block_notify.log"
 handler = logging.handlers.RotatingFileHandler(
             filename=logfile,
@@ -47,8 +49,6 @@ def get_block(host, port, user, password, blockhash):
     return json.loads(r.text)['result']
 
 try:
-    if not os.path.exists(logdir):
-        os.makedirs(logdir)
     start = time.time()
     r = redis.StrictRedis(args.redis_host, args.redis_port)
     rawblock = get_block(args.bitcoin_rpc_host, args.bitcoin_rpc_port, args.bitcoin_rpc_user, args.bitcoin_rpc_password, args.blockhash)
