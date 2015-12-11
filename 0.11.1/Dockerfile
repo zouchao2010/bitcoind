@@ -8,7 +8,7 @@ RUN cp -r testnet /var/lib/bitcoind
 RUN cp -r livenet /var/lib/bitcoind
 
 ENV TESTNET 0
-ENV VERSION 0.11.2
+ENV VERSION 0.11.0
 
 #更改源
 #RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak
