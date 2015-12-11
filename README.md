@@ -27,6 +27,7 @@ docker run  --name bitcoind \
 ## run(创建并运行一个容器，以守护进程方式)
 ```shell
 docker run  --name bitcoind \
+            --restart=always \
             -h bitcoind \
             -p 18332:18332 \
             -p 18333:18333 \
