@@ -28,6 +28,7 @@ docker run  --name bitcoind \
 ```shell
 docker run  --name bitcoind \
             --restart=always \
+            -m 2048m \
             -h bitcoind \
             -p 18332:18332 \
             -p 18333:18333 \
