@@ -21,7 +21,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 #安装bitcoind
-RUN wget https://bitcoin.org/bin/bitcoin-core-$VERSION/bitcoin-$VERSION-linux64.tar.gz \
+RUN wget https://bitcoin.org/bin/bitcoin-core-$VERSION/bitcoin-$VERSION-x86_64-linux-gnu.tar.gz   \
     && tar zxvf bitcoin-$VERSION-linux64.tar.gz \
     && ln -sfv /opt/bitcoind/bitcoin-$VERSION/bin/* /usr/local/bin \
     && rm -rf bitcoin-$VERSION-linux64.tar.gz
